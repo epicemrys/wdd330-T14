@@ -1,28 +1,59 @@
-// wrapper for querySelector...returns matching element
+// 🔍 Wrapper for querySelector - returns the matching element
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
-// or a more concise version if you are into that sort of thing:
-// export const qs = (selector, parent = document) => parent.querySelector(selector);
 
-// retrieve data from localstorage
+// 📦 Retrieve data safely from localStorage
 export function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : []; // ✅ Prevents "null" errors
 }
-// save data to local storage
+
+// 💾 Save data to localStorage
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-// set a listener for both touchend and click
+
+// 👆 Add listeners for both click and touch
 export function setClick(selector, callback) {
-  qs(selector).addEventListener("touchend", (event) => {
+  const element = qs(selector);
+  if (!element) return;
+  element.addEventListener("touchend", (event) => {
     event.preventDefault();
     callback();
   });
-  qs(selector).addEventListener("click", callback);
+  element.addEventListener("click", callback);
 }
+
+// 🆔 Get parameter from query string
 export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   return urlParams.get(param);
+}
+
+// 🧱 Render list dynamically using a template function
+export function renderListWithTemplate(
+  template,
+  parentElement,
+  list,
+  position = "afterbegin",
+  clear = false
+) {
+  const htmlStrings = list.map(template);
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+  parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
+}
+
+// 🛒 Update the cart count on the icon
+export function updateCartCount() {
+  const cart = getLocalStorage("so-cart");
+  const countEl = document.querySelector("#cart-count");
+
+  if (!countEl) return; // ✅ Avoid null reference errors
+
+  countEl.textContent = cart.length > 0 ? cart.length : "";
+  countEl.style.display = cart.length === 0 ? "none" : "inline-block";
 }
