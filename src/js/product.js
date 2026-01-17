@@ -18,7 +18,7 @@ function addProductToCart(cartProduct) {
 
 // add to cart button event handler
 async function addToCartHandler(e) {
-  // e.target.dataset.id should contain the ID of the product
+  //e.target.dataset.id should contain the ID of the product
   const selectedProduct = await dataSource.findProductById(e.target.dataset.id);
   addProductToCart(selectedProduct);
 }
