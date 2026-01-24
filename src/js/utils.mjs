@@ -32,9 +32,9 @@ export function getParam(param) {
 
 export function renderListWithTemplate(templateFn, parentElement, list, position = "afterbegin", clear = false) {
     if (clear) {
-        parentElement.innerHTML = '';
+        parentElement.innerHTML = "";
     }
     
     const htmlStrings = list.map(item => templateFn(item));
-    parentElement.insertAdjacentHTML(position, htmlStrings.join(''));
+    parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
