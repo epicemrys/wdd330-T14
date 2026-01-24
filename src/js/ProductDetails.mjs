@@ -43,6 +43,6 @@ function productDetailsTemplate(product) {
   document.getElementById('productColor').textContent = product.Colors[0].ColorName;
   document.getElementById('productDesc').innerHTML = product.DescriptionHtmlSimple;
 
-  //document.getElementById('addToCart').dataset.id = product.Id;
+  document.getElementById('addToCart').dataset.id = product.Id;
 
 }
