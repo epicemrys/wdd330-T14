@@ -21,7 +21,11 @@ export default class ProductDetails {
   }
 
   addProductToCart() {
-    const cartItems = getLocalStorage("so-cart") || [];
+    let cartItems = getLocalStorage("so-cart");
+    // Ensure cartItems is always an array
+    if (!Array.isArray(cartItems)) {
+      cartItems = [];
+    }
     console.log("Adding to cart:", this.product);
     // Check if product already exists in cart
     const existingItem = cartItems.find(item => item.Id === this.product.Id);
@@ -38,6 +42,7 @@ export default class ProductDetails {
     }
     console.log("Saving to localStorage:", cartItems);
     setLocalStorage("so-cart", cartItems);
+    alert("Item added to cart!");
   }
 
   renderProductDetails() {
