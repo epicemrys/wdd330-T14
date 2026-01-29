@@ -65,3 +65,9 @@ function productDetailsTemplate(product) {
   document.getElementById('addToCart').dataset.id = product.Id;
 
 }
+
+
+
+// Testing the Git tester
+
+// More testing of the Git tester
