@@ -57,3 +57,20 @@ export function updateCartCount() {
   countEl.textContent = cart.length > 0 ? cart.length : "";
   countEl.style.display = cart.length === 0 ? "none" : "inline-block";
 }
+export function alertMessage(message, scroll = true) {
+  const alert = document.createElement("div");
+  alert.classList.add("alert");
+  alert.innerHTML = `
+    <p>${message}</p>
+    <button class="alert-close" aria-label="Close">&times;</button>
+  `;
+
+  const main = document.querySelector("main");
+  main.prepend(alert);
+
+  alert.querySelector(".alert-close").addEventListener("click", () => {
+    alert.remove();
+  });
+
+  if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+}
