@@ -36,7 +36,7 @@ class Checkout {
     const itemsHTML = this.cartItems
       .map((item) => {
         const quantity = item.quantity || 1;
-        const total = (parseFloat(item.FinalPrice) * quantity).toFixed(2);
+        const itemTotal = (parseFloat(item.FinalPrice) * quantity).toFixed(2);
         return `
         <li class="checkout-item divider">
           <div class="item-details">
@@ -46,7 +46,7 @@ class Checkout {
             <p>Unit Price: $${item.FinalPrice}</p>
           </div>
           <div class="item-total">
-            <p>$${total}</p>
+            <p>$${itemTotal}</p>
           </div>
         </li>
       `;

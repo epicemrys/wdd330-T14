@@ -1,4 +1,5 @@
-import { resolve } from "path";
+//iam just checking out something base on the week2 individual project
+/*import { resolve } from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -26,6 +27,23 @@ export default defineConfig({
           "src/product_pages/northface-talus-4.html",
         ),
         productListing: resolve(__dirname, "src/product_listing/index.html"),
+      },
+    },
+  },
+});*/
+import { resolve } from "path";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  root: "src",
+  build: {
+    outDir: "../dist",
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "src/index.html"),
+        cart: resolve(__dirname, "src/cart/index.html"),
+        checkout: resolve(__dirname, "src/checkout/index.html"),
+        product: resolve(__dirname, "src/product_pages/index.html"),
       },
     },
   },

@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //Fetch data and log to console
 async function fetchProductData() {
   try {
+    const productData = new ProductData("tents");
     const data = await productData.getData();
     console.log(data);
   } catch (error) {
