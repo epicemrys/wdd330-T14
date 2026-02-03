@@ -76,6 +76,8 @@ function productDetailsTemplate(product) {
   const nameEl = document.querySelector("main h3");
   if (nameEl) nameEl.textContent = product.NameWithoutBrand || product.Name || "";
 
+  document.getElementById('addToCart').dataset.id = product.Id;
+
   // Image
   const imgEl = document.getElementById("productImage");
   if (imgEl) {
