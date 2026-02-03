@@ -58,7 +58,56 @@ export async function loadHeaderFooter() {
 
   const headerElement = document.querySelector("#header");
   const footerElement = document.querySelector("#footer");
+  
 
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
+}
+
+export function dispatchCartChange() {
+  window.dispatchEvent(new CustomEvent('cartchanged'));
+}
+
+// Call this after every cart modification
+export function updateCartCount() {
+  const cart = getLocalStorage("so-cart") || [];
+  console.log("[updateCartCount] cart length =", cart.length, "items");
+  
+  const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  console.log("[updateCartCount] total quantity =", totalItems);
+
+  const countEl = document.getElementById("cart-count");
+  if (countEl) {
+    console.log("[updateCartCount] #cart-count element found");
+    countEl.textContent = totalItems || "0";
+    countEl.classList.toggle("hidden", totalItems === 0);
+  } else {
+    console.log("[updateCartCount] #cart-count NOT found on this page");
+  }
+}
+
+// Listen for cart changes on every page and update the badge
+document.addEventListener('cartchanged', () => {
+  console.log("Cart changed event received → updating count");
+  updateCartCount();
+});
+
+// Also update count when page loads (after header is ready)
+export async function initCartBadge() {
+  await loadHeaderFooter();           // ensure header is inserted
+  updateCartCount();                  // now #cart-count should exist
+  console.log("Cart badge initialized after header load");  
+}
+
+// Listen for cart changes (this should only be added once)
+let cartListenerAdded = false;
+export function addCartChangeListener() {
+  if (cartListenerAdded) return;
+  cartListenerAdded = true;
+  
+  window.addEventListener('cartchanged', () => {
+    console.log("cartchanged event → updating badge");
+    updateCartCount();
+  });
+  console.log("Cart change listener registered");
 }
