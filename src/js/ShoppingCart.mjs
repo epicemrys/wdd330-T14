@@ -1,4 +1,4 @@
-import { renderListWithTemplate, getLocalStorage, setLocalStorage } from './utils.mjs';
+import { renderListWithTemplate, getLocalStorage, setLocalStorage } from "./utils.mjs";
 
 function cartItemTemplate(item) {
     const quantity = item.quantity || 1;
@@ -84,6 +84,7 @@ export default class ShoppingCart {
             this.renderCart();
             this.updateCartTotals();
             this.attachEventListeners();
+            dispatchCartChange();
         }
     }
 
@@ -93,6 +94,8 @@ export default class ShoppingCart {
 
         this.cartItems = this.cartItems.filter(item => item.Id !== productId);
         setLocalStorage("so-cart", this.cartItems);
+        dispatchCartChange();
+        
         this.renderCart();
         this.updateCartTotals();
         this.attachEventListeners();
