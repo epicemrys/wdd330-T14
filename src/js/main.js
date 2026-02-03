@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const element = document.querySelector("product-list");
     const productList = new ProductList("tents", dataSource, element);
 
-    productList.init();
+  productList.init();
 });
 
 //Fetch data and log to console

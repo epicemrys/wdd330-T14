@@ -1,25 +1,24 @@
 <!doctype html>
 
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sleep Outside | Cart</title>
 
-  <title>Sleep Outside | Cart</title>
+    <link rel="stylesheet" href="/css/style.css" />
 
-  <link rel="stylesheet" href="/css/style.css" />
+    <script src="../js/cart.js" type="module"></script>
+  </head>
 
-  <script src="../js/cart.js" type="module"></script>
-</head>
-
-<body>
-  <header id="header" class="divider">
-    <div class="logo">
-      <img src="/images/noun_Tent_2517.svg" alt="tent image for logo" />
-      <a href="/index.html"> Sleep<span class="highlight">Outside</span></a>
-    </div>
+  <body>
+    <header id="header" class="divider">
+      <div class="logo">
+        <img src="/images/noun_Tent_2517.svg" alt="tent image for logo" />
+        <a href="/index.html"> Sleep<span class="highlight">Outside</span></a>
+      </div>
 
     <div class="cart">
       <a href="cart/" class="cart-link">
@@ -75,10 +74,13 @@
             <span>Total:</span>
             <span id="cart-total">$0.00</span>
           </div>
+          <button id="checkout-btn" class="btn-checkout">
+            Proceed to Checkout
+          </button>
         </div>
-        <button id="checkout-btn" class="btn-checkout">Proceed to Checkout</button>
-      </div>
-    </section>
-  </main>
+      </section>
+    </main>
 
-  <footer id="footer">&copy;NOT a real business</footer>
+    <footer id="footer">&copy;NOT a real business</footer>
+  </body>
+</html>
