@@ -1,136 +1,97 @@
-import {
-  loadHeaderFooter,
-  getLocalStorage,
-  setLocalStorage,
+import { 
+  loadHeaderFooter, 
+  getLocalStorage, 
+  setLocalStorage, 
+  updateCartCount,
+  dispatchCartChange,       // ← add this import
+  initCartBadge             // ← add this if you implemented it in utils.mjs
 } from "./utils.mjs";
+import CheckoutProcess from "./CheckoutProcess.mjs";
 
-// Load header and footer
-loadHeaderFooter();
-
-class Checkout {
-  constructor() {
-    this.cartItems = [];
-    this.orderData = {};
-  }
-
-  init() {
-    this.loadCartItems();
-    this.displayOrderSummary();
-    this.attachFormHandler();
-  }
-
-  loadCartItems() {
-    this.cartItems = getLocalStorage("so-cart") || [];
-    console.log("Checkout - Cart items loaded:", this.cartItems);
-  }
-
-  displayOrderSummary() {
-    const cartList = document.querySelector(".cart-list");
-
-    if (!this.cartItems || this.cartItems.length === 0) {
-      cartList.innerHTML = "<li><p>Your cart is empty</p></li>";
-      return;
-    }
-
-    // Create order summary items
-    const itemsHTML = this.cartItems
-      .map((item) => {
-        const quantity = item.quantity || 1;
-        const total = (parseFloat(item.FinalPrice) * quantity).toFixed(2);
-        return `
-        <li class="checkout-item divider">
-          <div class="item-details">
-            <h4>${item.Name}</h4>
-            <p>Color: ${item.Colors[0].ColorName}</p>
-            <p>Quantity: ${quantity}</p>
-            <p>Unit Price: $${item.FinalPrice}</p>
-          </div>
-          <div class="item-total">
-            <p>$${total}</p>
-          </div>
-        </li>
-      `;
-      })
-      .join("");
-
-    // Calculate total
-    const subtotal = this.cartItems
-      .reduce((sum, item) => {
-        const quantity = item.quantity || 1;
-        return sum + parseFloat(item.FinalPrice) * quantity;
-      }, 0)
-      .toFixed(2);
-
-    const tax = (subtotal * 0.1).toFixed(2); // 10% tax
-    const total = (parseFloat(subtotal) + parseFloat(tax)).toFixed(2);
-
-    cartList.innerHTML =
-      itemsHTML +
-      `
-      <li class="checkout-summary">
-        <div class="summary-row">
-          <span>Subtotal:</span>
-          <span>$${subtotal}</span>
-        </div>
-        <div class="summary-row">
-          <span>Tax (10%):</span>
-          <span>$${tax}</span>
-        </div>
-        <div class="summary-row total">
-          <span>Total:</span>
-          <span>$${total}</span>
-        </div>
-      </li>
-    `;
-  }
-
-  attachFormHandler() {
-    const form = document.getElementById("checkout-form");
-    if (form) {
-      form.addEventListener("submit", (e) => this.handleFormSubmit(e));
-    }
-  }
-
-  handleFormSubmit(e) {
-    e.preventDefault();
-
-    // Get form data
-    const formData = new FormData(e.target);
-    this.orderData = {
-      firstName: formData.get("fname"),
-      lastName: formData.get("lname"),
-      street: formData.get("street"),
-      city: formData.get("city"),
-      state: formData.get("state"),
-      zip: formData.get("zip"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      items: this.cartItems,
-      orderDate: new Date().toISOString(),
-    };
-
-    console.log("Order placed:", this.orderData);
-
-    // Save order to localStorage
-    const orders = getLocalStorage("so-orders") || [];
-    orders.push(this.orderData);
-    setLocalStorage("so-orders", orders);
-
-    // Clear the cart
-    setLocalStorage("so-cart", []);
-
-    // Show success message
-    alert("Order placed successfully! Thank you for your purchase.");
-
-    // Redirect to home page after a brief delay
-    setTimeout(() => {
-      window.location.href = "/index.html";
-    }, 1500);
-  }
+function cartItemTemplate(item) {
+  const quantity = item.quantity || 1;
+  const total = (parseFloat(item.FinalPrice) * quantity).toFixed(2);
+  return `
+    <li class="checkout-item divider">
+      <div class="item-details">
+        <h4>${item.Name}</h4>
+        <p>Color: ${item.Colors?.[0]?.ColorName || "N/A"}</p>
+        <p>Quantity: ${quantity}</p>
+        <p>Unit Price: $${item.FinalPrice}</p>
+      </div>
+      <div class="item-total">
+        <p>$${total}</p>
+      </div>
+    </li>
+  `;
 }
 
-// Initialize checkout when DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
-  const checkout = new Checkout();
-  checkout.init();
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("checkout.js → DOMContentLoaded started");
+
+  // 1. Ensure header & footer are loaded and badge is initialized
+  await loadHeaderFooter();
+  console.log("Header & footer loaded");
+
+  // 2. Update cart count now that DOM elements should exist
+  await updateCartCount();   // or await initCartBadge() if you added that helper
+
+  // 3. Load cart items
+  const cartItems = getLocalStorage("so-cart") || [];
+  console.log("Cart items loaded in checkout:", cartItems.length, "items");
+
+  const cartList = document.querySelector(".cart-list");
+  const placeOrderBtn = document.getElementById("place-order-btn");
+
+  if (!cartList) {
+    console.error("Cannot find .cart-list element on checkout page");
+    return;
+  }
+
+  // Show empty cart message and disable button if needed
+  if (cartItems.length === 0) {
+    cartList.innerHTML = `<li><p>Your cart is empty. <a href="/index.html">Continue shopping</a></p></li>`;
+    if (placeOrderBtn) placeOrderBtn.disabled = true;
+    return;
+  }
+
+  // 4. Render cart items list
+  cartList.innerHTML = cartItems.map(cartItemTemplate).join("");
+
+  // 5. Initialize totals & ZIP listener
+  const checkoutProcess = new CheckoutProcess(cartItems);
+  checkoutProcess.init();
+
+  document.getElementById("zip")?.addEventListener("input", () => {
+    checkoutProcess.displayTotals();
+  });
+
+  // 6. Form submission handler
+  document.getElementById("checkout-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (placeOrderBtn) {
+      placeOrderBtn.disabled = true;
+      placeOrderBtn.textContent = "Processing...";
+    }
+
+    try {
+      await checkoutProcess.checkout(e.target);
+      // Success → cart is cleared inside checkout(), alert + redirect already handled
+      // Make sure other tabs/pages see the cleared cart
+      dispatchCartChange();           // ← important!
+    } catch (err) {
+      console.error("Order submission failed:", err);
+      alert("There was a problem processing your order. Please try again.");
+    } finally {
+      if (placeOrderBtn) {
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.textContent = "Checkout";
+      }
+    }
+  });
+
+  // Final safety update
+  updateCartCount();
+  console.log("checkout.js → initialization complete");
 });

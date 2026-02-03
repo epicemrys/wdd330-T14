@@ -1,4 +1,4 @@
-import { renderListWithTemplate } from './utils.mjs';
+import { renderListWithTemplate } from "./utils.mjs";
 
 function productCardTemplate(product) {
     return `
@@ -26,7 +26,7 @@ export default class ProductList {
             const list = await this.dataSource.getData(this.category);
             this.renderList(list);
         } catch (error) {
-            console.error('Error initializing ProductList:', error);
+            console.error("Error initializing ProductList:", error);
         }
     }
     renderList(list) {

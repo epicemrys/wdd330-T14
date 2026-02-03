@@ -1,4 +1,4 @@
-const baseURL = import.meta.env.VITE_SERVER_URL;
+const baseURL = import.meta.env.VITE_SERVER_URL || "https://wdd330-backend.onrender.com/";
 
 function convertToJson(res) {
   if (res.ok) {
@@ -8,8 +8,21 @@ function convertToJson(res) {
   }
 }
 
-export default class ProductData {
+export default class ExternalServices {
   constructor() {
+  }
+
+  async submitOrder(order) {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(order)
+    };
+
+    const response = await fetch(`${baseURL}checkout`, options);
+    return convertToJson(response);
   }
 
   async getData(category) {

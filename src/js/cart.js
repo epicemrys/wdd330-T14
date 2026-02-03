@@ -2,7 +2,10 @@ import { loadHeaderFooter } from "./utils.mjs";
 import ShoppingCart from "./ShoppingCart.mjs";
 
 // Load header and footer, then initialize shopping cart
-loadHeaderFooter();
+loadHeaderFooter().then(async () => {
+  await initCartBadge();
+  addCartChangeListener();
+});
 
 // Wait a moment for DOM to be ready, then initialize shopping cart
 document.addEventListener("DOMContentLoaded", () => {
