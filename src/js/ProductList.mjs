@@ -1,4 +1,4 @@
-import { renderListWithTemplate } from './utils.mjs';
+import { renderListWithTemplate } from "./utils.mjs";
 
 function productCardTemplate(product) {
     return `
@@ -13,23 +13,28 @@ function productCardTemplate(product) {
     `;
 }
 
+// src/js/ProductList.mjs
 export default class ProductList {
-    constructor(category, dataSource, listElement) {
-        this.category = category;
-        this.dataSource = dataSource;
-        this.listElement = listElement;
-        this.products = [];
-    }
+  constructor(category, dataSource, listElement) {
+    this.category = category;
+    this.dataSource = dataSource;
+    this.listElement = listElement;
+    this.products = [];
+  }
 
-    async init() {
-        try {
-            const list = await this.dataSource.getData(this.category);
-            this.renderList(list);
-        } catch (error) {
-            console.error('Error initializing ProductList:', error);
-        }
-    }
-    renderList(list) {
-        renderListWithTemplate(productCardTemplate, this.listElement, list, "afterbegin", false);
-    }
+  async init() {
+    // If this fails, the error will surface naturally (no console.* needed)
+    const list = await this.dataSource.getData(this.category);
+    this.renderList(list);
+  }
+
+  renderList(list) {
+    renderListWithTemplate(
+      productCardTemplate,
+      this.listElement,
+      list,
+      "afterbegin",
+      false
+    );
+  }
 }

@@ -9,25 +9,23 @@ export default class ProductDetails {
 
     async init() {
       try {
-        this.product = await this.dataSource.findProductById(this.productId);
+        const product = await this.dataSource.findProductById(this.productId);
 
-        // If backend didn't return a product, show a friendly message.
-        if (!this.product) {
+        // if API returns null/undefined
+        if (!product) {
           this.renderNotFound();
           return;
         }
 
+        this.product = product;
         this.renderProductDetails();
 
-        const addToCartBtn = document.getElementById("addToCart");
-        if (addToCartBtn) {
-          addToCartBtn.addEventListener(
-            "click",
-            this.addProductToCart.bind(this)
-          );
+        const addBtn = document.getElementById("addToCart");
+        if (addBtn) {
+          addBtn.addEventListener("click", this.addProductToCart.bind(this));
         }
-      } catch (e) {
-        // If something goes wrong (network, parsing, etc.), show not found UI.
+      } catch (err) {
+        // any fetch / JSON error
         this.renderNotFound();
       }
     }
@@ -57,13 +55,15 @@ export default class ProductDetails {
   }
 
   renderNotFound() {
-    const container = document.querySelector(".product-detail");
-    if (!container) return;
+    const main = document.querySelector("main");
+    if (!main) return;
 
-    container.innerHTML = `
-      <h2>Product not found</h2>
-      <p>We couldn't find the product you requested. Please return to the product list and try again.</p>
-      <p><a href="../product_listing/index.html">Back to products</a></p>
+    main.innerHTML = `
+      <section class="product-detail">
+        <h2>Product not found</h2>
+        <p>We couldn't find the product you requested. Please return to the product list and try again.</p>
+        <p><a href="../product_listing/index.html">Back to products</a></p>
+      </section>
     `;
   }
 
