@@ -1,4 +1,4 @@
-import { renderListWithTemplate, getLocalStorage, setLocalStorage } from './utils.mjs';
+import { renderListWithTemplate, getLocalStorage, setLocalStorage } from "./utils.mjs";
 
 function cartItemTemplate(item) {
   const quantity = item.quantity || 1;
@@ -30,7 +30,16 @@ export default class ShoppingCart {
   }
 
   init() {
-    this.cartItems = getLocalStorage("so-cart") || [];
+    let items = getLocalStorage("so-cart");
+
+    // Defensive fix (W01): ensure cart is always an array
+    if (!Array.isArray(items)) {
+      // If the stored cart is corrupted or not an array, reset it.
+      items = [];
+      setLocalStorage("so-cart", items);
+    }
+
+    this.cartItems = items;
     this.renderCart();
     this.updateCartTotals();
     this.attachEventListeners();
@@ -38,6 +47,11 @@ export default class ShoppingCart {
     this.updateCartBadge();
   }
 
+  logCorruptedCartWarning() {
+    /* eslint-disable-next-line no-console */
+    console.warn("Corrupted cart detected in LocalStorage. Resetting.");
+  }
+  
   renderCart() {
     if (!this.cartItems || this.cartItems.length === 0) {
       this.listElement.innerHTML = "<p>Your cart is empty</p>";
