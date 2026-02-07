@@ -15,6 +15,13 @@ export default class ExternalServices {
     return data.Result;
   }
 
+   async searchData(searchTerm) {
+    if (!searchTerm) return [];
+    const response = await fetch(`${baseURL}products/search/${encodeURIComponent(searchTerm)}`);
+    const data = await convertToJson(response);
+    return data.Result;
+  }
+  
   async findProductById(id) {
     const response = await fetch(`${baseURL}product/${id}`);
     const data = await convertToJson(response);
