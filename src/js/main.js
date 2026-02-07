@@ -1,27 +1,18 @@
-import ProductData from './ProductData.mjs';
+import ExternalServices from './ExternalServices.mjs';
 import ProductList from './ProductList.mjs';
-import { loadHeaderFooter } from './utils.mjs';
+import { loadHeaderFooter, getLocalStorage } from './utils.mjs';
 
 // Load header and footer
 loadHeaderFooter();
 
-// Initialize product list when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const dataSource = new ProductData('tents'); //instance of ProductData
-    const element = document.querySelector('product-list');
-    const productList = new ProductList('tents', dataSource, element);
+  const dataSource = new ExternalServices('tents');
+  const element = document.querySelector('.product-list');
+  const productList = new ProductList('tents', dataSource, element);
 
-    productList.init();
+  productList.init();
+  updateCartBadge(); // refresh badge on page load
 });
 
-//Fetch data and log to console
-async function fetchProductData() {
-    try {
-        const data = await productData.getData();
-        console.log(data);
-    } catch (error) {
-        console.error('Error fetching product data:', error);
-    }
-}
-
-fetchProductData();
+// Keep badge updated if localStorage changes
+window.addEventListener("storage", updateCartBadge);

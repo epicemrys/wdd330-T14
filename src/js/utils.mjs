@@ -1,19 +1,28 @@
-// wrapper for querySelector...returns matching element
+// wrapper for querySelector
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
-// or a more concise version if you are into that sort of thing:
-// export const qs = (selector, parent = document) => parent.querySelector(selector);
 
-// retrieve data from localstorage
+// localStorage helpers
 export function getLocalStorage(key) {
   return JSON.parse(localStorage.getItem(key));
 }
-// save data to local storage
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-// set a listener for both touchend and click
+
+// cart badge updater
+export function updateCartBadge() {
+  const cartItems = getLocalStorage("so-cart") || [];
+  const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const badge = document.querySelector(".cart-count");
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? "inline-block" : "none";
+  }
+}
+
+// other utility functions unchanged...
 export function setClick(selector, callback) {
   qs(selector).addEventListener("touchend", (event) => {
     event.preventDefault();
@@ -22,19 +31,16 @@ export function setClick(selector, callback) {
   qs(selector).addEventListener("click", callback);
 }
 
-// get the product id from the query string
 export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const product = urlParams.get(param);
-  return product
+  return urlParams.get(param);
 }
 
 export function renderListWithTemplate(templateFn, parentElement, list, position = "afterbegin", clear = false) {
   if (clear) {
     parentElement.innerHTML = "";
   }
-
   const htmlStrings = list.map(item => templateFn(item));
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
@@ -48,8 +54,7 @@ export function renderWithTemplate(template, parentElement, data, callback) {
 
 export async function loadTemplate(path) {
   const response = await fetch(path);
-  const template = await response.text();
-  return template;
+  return await response.text();
 }
 
 export async function loadHeaderFooter() {
